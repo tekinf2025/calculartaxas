@@ -1,0 +1,509 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcular taxas</title>
+    <link rel="icon" href="https://i.imgur.com/l9vbUlF.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .tech-gradient {
+            background: linear-gradient(90deg, #0a2540, #0062cc);
+        }
+        .logo-text {
+            background: linear-gradient(90deg, #0062cc, #00d2ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, #0062cc, #00d2ff);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #0a2540, #0062cc);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #0062cc, #00d2ff);
+            transform: translateY(-2px);
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        .tech-icon path {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: dash 2s linear forwards;
+        }
+        .card-gradient {
+            background: linear-gradient(135deg, #0a2540 0%, #1e3a5f 100%);
+        }
+        .cyan-glow {
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        }
+        .dark-section {
+            background-color: #1a202c;
+        }
+        .tech-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .result-card {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .result-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        input:focus, select:focus {
+            border-color: #0062cc;
+            box-shadow: 0 0 0 3px rgba(0, 98, 204, 0.2);
+        }
+        .custom-option {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="tech-gradient text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-12 h-12" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" stroke="#00d2ff" stroke-width="2" class="tech-icon" />
+                        <path d="M30 40L50 30L70 40M30 50L50 40L70 50M30 60L50 50L70 60" stroke="#00d2ff" stroke-width="2" class="tech-icon" />
+                        <circle cx="50" cy="50" r="15" stroke="#00d2ff" stroke-width="2" class="tech-icon" />
+                    </svg>
+                    <div>
+                        <h1 class="text-3xl font-bold logo-text">TEKINFORMÁTICA</h1>
+                        <p class="text-gray-300 text-sm">Soluções tecnológicas para seu negócio</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-10">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold mb-3 tech-font">Calculadora de Prestações</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">Simule o valor das parcelas para seus produtos de tecnologia e escolha a melhor opção de pagamento, valores no crédito à vista, 3x, 6x e 12x.</p>
+        </div>
+
+        <!-- Calculator Section -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                <div class="tech-gradient p-6 text-white">
+                    <h3 class="text-2xl font-semibold">Dados do Produto</h3>
+                    <p class="text-blue-100">Preencha as informações abaixo para calcular as opções de pagamento</p>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="mb-4">
+                            <label for="productName" class="block text-gray-700 font-medium mb-2">Nome do Produto</label>
+                            <input type="text" id="productName" class="w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Ex: Notebook Dell XPS">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="productPrice" class="block text-gray-700 font-medium mb-2">Valor à Vista (R$)</label>
+                            <input type="number" id="productPrice" class="w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Ex: 3500">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="installments" class="block text-gray-700 font-medium mb-2">Número de Parcelas</label>
+                            <input type="number" id="installments" min="1" max="24" value="1" class="w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Ex: 12">
+                        </div>
+                    </div>
+                    
+                    <div class="custom-option">
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" id="customInstallmentOption" class="mr-2 h-5 w-5 text-blue-600">
+                            <label for="customInstallmentOption" class="text-gray-700 font-medium">Calcular parcelas personalizadas (3% ao mês)</label>
+                        </div>
+                        
+                        <div id="customInstallmentFields" class="grid md:grid-cols-2 gap-6 hidden">
+                            <div class="mb-4">
+                                <label for="customInstallmentCount" class="block text-gray-700 font-medium mb-2">Número de Parcelas Personalizado</label>
+                                <input type="number" id="customInstallmentCount" min="1" max="36" value="1" class="w-full px-4 py-2 border rounded-lg focus:outline-none" placeholder="Ex: 24">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <button id="calculateBtn" class="btn-primary text-white px-8 py-3 rounded-lg font-medium">
+                            Calcular Opções de Pagamento
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div id="resultsSection" class="hidden">
+                <h3 class="text-2xl font-bold mb-6 text-center tech-font">Opções de Pagamento</h3>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Card 1: Parcelado -->
+                    <div id="card1" class="result-card bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="card-gradient p-4 text-white">
+                            <h4 class="text-xl font-semibold">Parcelado</h4>
+                            <p class="text-blue-100 text-sm">Pagamento em parcelas</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Parcelas:</span>
+                                <span id="installmentCount" class="font-semibold">12x</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor da Parcela:</span>
+                                <span id="installmentValue" class="font-semibold">R$ 300,42</span>
+                            </div>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-gray-600">Total:</span>
+                                <span id="totalInstallment" class="font-bold text-lg">R$ 3.605,04</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Acréscimo de 3% ao mês sobre o valor à vista
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2: 9% de Juros -->
+                    <div id="card2" class="result-card bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="card-gradient p-4 text-white">
+                            <h4 class="text-xl font-semibold">3 Meses</h4>
+                            <p class="text-blue-100 text-sm">Pagamento em 3 meses</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor à Vista:</span>
+                                <span id="originalPrice1" class="font-semibold">R$ 3.500,00</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor da Parcela:</span>
+                                <span id="monthlyPayment1" class="font-semibold">R$ 1.271,67</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Taxa:</span>
+                                <span class="font-semibold">9%</span>
+                            </div>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-gray-600">Total:</span>
+                                <span id="total9Percent" class="font-bold text-lg">R$ 3.815,00</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Acréscimo fixo de 9% sobre o valor à vista
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3: 18% de Juros -->
+                    <div id="card3" class="result-card bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="card-gradient p-4 text-white">
+                            <h4 class="text-xl font-semibold">6 Meses</h4>
+                            <p class="text-blue-100 text-sm">Pagamento em 6 meses</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor à Vista:</span>
+                                <span id="originalPrice2" class="font-semibold">R$ 3.500,00</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor da Parcela:</span>
+                                <span id="monthlyPayment2" class="font-semibold">R$ 688,33</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Taxa:</span>
+                                <span class="font-semibold">18%</span>
+                            </div>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-gray-600">Total:</span>
+                                <span id="total18Percent" class="font-bold text-lg">R$ 4.130,00</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Acréscimo fixo de 18% sobre o valor à vista
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4: 26% de Juros -->
+                    <div id="card4" class="result-card bg-white rounded-xl shadow-lg overflow-hidden mt-6">
+                        <div class="card-gradient p-4 text-white">
+                            <h4 class="text-xl font-semibold">12 Meses</h4>
+                            <p class="text-blue-100 text-sm">Pagamento em 12 meses</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor à Vista:</span>
+                                <span id="originalPrice3" class="font-semibold">R$ 3.500,00</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor da Parcela:</span>
+                                <span id="monthlyPayment3" class="font-semibold">R$ 367,50</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Taxa:</span>
+                                <span class="font-semibold">26%</span>
+                            </div>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-gray-600">Total:</span>
+                                <span id="total26Percent" class="font-bold text-lg">R$ 4.410,00</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Acréscimo fixo de 26% sobre o valor à vista
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5: Custom Installments (3% per month) -->
+                    <div id="card5" class="result-card bg-white rounded-xl shadow-lg overflow-hidden mt-6 hidden">
+                        <div class="card-gradient p-4 text-white">
+                            <h4 class="text-xl font-semibold">Personalizado</h4>
+                            <p class="text-blue-100 text-sm">Parcelas personalizadas</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor à Vista:</span>
+                                <span id="originalPriceCustom" class="font-semibold">R$ 3.500,00</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Parcelas:</span>
+                                <span id="customInstallmentCountDisplay" class="font-semibold">24x</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Valor da Parcela:</span>
+                                <span id="customMonthlyPayment" class="font-semibold">R$ 218,75</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Taxa:</span>
+                                <span id="customInterestRate" class="font-semibold">72%</span>
+                            </div>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-gray-600">Total:</span>
+                                <span id="customTotal" class="font-bold text-lg">R$ 5.250,00</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                Acréscimo de 3% ao mês sobre o valor à vista
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <button id="resetBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium transition">
+                        Nova Simulação
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dark-section text-white mt-16">
+        <div class="container mx-auto px-4 py-10">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <svg class="w-12 h-12" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="45" stroke="#00d2ff" stroke-width="2" class="tech-icon" />
+                            <path d="M30 40L50 30L70 40M30 50L50 40L70 50M30 60L50 50L70 60" stroke="#00d2ff" stroke-width="2" class="tech-icon" />
+                            <circle cx="50" cy="50" r="15" stroke="#00d2ff" stroke-width="2" class="tech-icon" />
+                        </svg>
+                        <div>
+                            <h3 class="text-3xl font-bold logo-text">TEKINFORMÁTICA</h3>
+                            <p class="text-gray-400 text-sm">Soluções tecnológicas para seu negócio</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mt-4">Oferecemos os melhores produtos de informática.</p>
+                </div>
+                
+                <div class="flex justify-end">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Contato</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <svg class="h-4 w-4 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                <span>Telefone: (21) 97628-6027</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="h-4 w-4 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <span>Email: tekin.formatica@hotmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-10 pt-6">
+                <p class="mt-6 text-center text-gray-400 text-xs">
+                    &copy; 2011 TEKINFORMÁTICA. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const customInstallmentOption = document.getElementById('customInstallmentOption');
+            const customInstallmentFields = document.getElementById('customInstallmentFields');
+            const card5 = document.getElementById('card5');
+            
+            // Toggle custom installment fields
+            customInstallmentOption.addEventListener('change', function() {
+                if (this.checked) {
+                    customInstallmentFields.classList.remove('hidden');
+                } else {
+                    customInstallmentFields.classList.add('hidden');
+                }
+            });
+            
+            calculateBtn.addEventListener('click', function() {
+                const productName = document.getElementById('productName').value;
+                const productPrice = parseFloat(document.getElementById('productPrice').value);
+                const installments = parseInt(document.getElementById('installments').value);
+                
+                if (!productName || isNaN(productPrice) || isNaN(installments) || productPrice <= 0 || installments <= 0) {
+                    alert('Por favor, preencha todos os campos corretamente.');
+                    return;
+                }
+                
+                // Calculate values
+                const installmentValue = (productPrice + (productPrice * 0.03 * installments)) / installments;
+                const totalInstallment = installmentValue * installments;
+                
+                const total9Percent = productPrice * 1.09;
+                const total18Percent = productPrice * 1.18;
+                const total26Percent = productPrice * 1.26;
+                
+                // Calculate monthly payments
+                const monthlyPayment1 = total9Percent / 3;  // 3 months
+                const monthlyPayment2 = total18Percent / 6; // 6 months
+                const monthlyPayment3 = total26Percent / 12; // 12 months
+                
+                // Format currency
+                const formatter = new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+                
+                // Update UI
+                document.getElementById('installmentCount').textContent = installments + 'x';
+                document.getElementById('installmentValue').textContent = formatter.format(installmentValue);
+                document.getElementById('totalInstallment').textContent = formatter.format(totalInstallment);
+                
+                document.getElementById('originalPrice1').textContent = formatter.format(productPrice);
+                document.getElementById('originalPrice2').textContent = formatter.format(productPrice);
+                document.getElementById('originalPrice3').textContent = formatter.format(productPrice);
+                
+                document.getElementById('monthlyPayment1').textContent = formatter.format(monthlyPayment1);
+                document.getElementById('monthlyPayment2').textContent = formatter.format(monthlyPayment2);
+                document.getElementById('monthlyPayment3').textContent = formatter.format(monthlyPayment3);
+                
+                document.getElementById('total9Percent').textContent = formatter.format(total9Percent);
+                document.getElementById('total18Percent').textContent = formatter.format(total18Percent);
+                document.getElementById('total26Percent').textContent = formatter.format(total26Percent);
+                
+                // Handle custom installment option
+                if (customInstallmentOption.checked) {
+                    const customInstallmentCount = parseInt(document.getElementById('customInstallmentCount').value);
+                    
+                    if (isNaN(customInstallmentCount) || customInstallmentCount <= 0) {
+                        alert('Por favor, insira um número válido de parcelas personalizadas.');
+                        return;
+                    }
+                    
+                    // Calculate custom installment values (3% per month)
+                    const customInterestRate = customInstallmentCount * 3; // Total interest rate
+                    const customTotal = productPrice * (1 + (customInterestRate / 100));
+                    const customMonthlyPayment = customTotal / customInstallmentCount;
+                    
+                    // Update custom installment card
+                    document.getElementById('originalPriceCustom').textContent = formatter.format(productPrice);
+                    document.getElementById('customInstallmentCountDisplay').textContent = customInstallmentCount + 'x';
+                    document.getElementById('customMonthlyPayment').textContent = formatter.format(customMonthlyPayment);
+                    document.getElementById('customInterestRate').textContent = customInterestRate + '%';
+                    document.getElementById('customTotal').textContent = formatter.format(customTotal);
+                    
+                    // Show custom installment card
+                    card5.classList.remove('hidden');
+                } else {
+                    // Hide custom installment card
+                    card5.classList.add('hidden');
+                }
+                
+                // Show results
+                resultsSection.classList.remove('hidden');
+                
+                // Animate cards
+                const cards = document.querySelectorAll('.result-card:not(.hidden)');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('show');
+                    }, index * 100);
+                });
+                
+                // Scroll to results
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            
+            resetBtn.addEventListener('click', function() {
+                document.getElementById('productName').value = '';
+                document.getElementById('productPrice').value = '';
+                document.getElementById('installments').value = '1';
+                document.getElementById('customInstallmentOption').checked = false;
+                document.getElementById('customInstallmentCount').value = '1';
+                customInstallmentFields.classList.add('hidden');
+                
+                resultsSection.classList.add('hidden');
+                
+                const cards = document.querySelectorAll('.result-card');
+                cards.forEach(card => {
+                    card.classList.remove('show');
+                });
+                
+                document.getElementById('productName').focus();
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94537d4de373cb1d',t:'MTc0ODE1OTkyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
