@@ -595,6 +595,37 @@
         </div>
     </main>
 
+
+    <!-- Sessão Simulador de Parcelamentos -->
+    <div class="dashboard-card animate-fade-in mt-8">
+    <div class="card-header">
+        <h3 class="text-xl font-semibold">Simulador de Parcelas</h3>
+    </div>
+    <div class="card-body">
+        <div class="grid grid-cols-1 md:grid-cols-10 gap-6 mb-4">
+            <div>
+                <label class="block text-sm font-medium mb-2" for="valorTotal">Valor Total (R$)</label>
+                <input type="number" id="valorTotal" placeholder="Ex: 1200" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-2" for="numParcelas">Número de Parcelas</label>
+                <input type="number" id="numParcelas" min="1" max="12" placeholder="1 a 12" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-2" for="juros">Juros ao mês (%)</label>
+                <input type="number" id="juros" placeholder="Ex: 2" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+            </div>
+        </div>
+        <div class="flex left-end">
+            <button onclick="calcularParcelas()" class="btn-primary text-white px-6 py-3 rounded-lg">
+                Calcular
+            </button>
+        </div>
+        <div id="resultadoParcelas" class="mt-6 text-lg font-semibold hidden"></div>
+    </div>
+</div>
+
+
     <!-- Footer -->
     <footer class="footer-gradient text-white mt-16">
         <div class="container mx-auto px-6 py-8">
@@ -1148,6 +1179,38 @@
             updateTable();
             updateSummary();
         });
+        
+// Simulador de juros
+function calcularParcelas() {
+    const valor = parseFloat(document.getElementById("valorTotal").value);
+    const parcelas = parseInt(document.getElementById("numParcelas").value);
+    const juros = parseFloat(document.getElementById("juros").value);
+    const resultado = document.getElementById("resultadoParcelas");
+
+    if (isNaN(valor) || isNaN(parcelas) || isNaN(juros) || parcelas < 1 || parcelas > 12) {
+        resultado.textContent = "Preencha corretamente os campos com valores válidos.";
+        resultado.classList.remove("hidden", "text-indigo-700");
+        resultado.classList.add("text-red-600");
+        return;
+    }
+
+    // Fórmula de juros compostos: Parcela = P * ( (1 + i)^n * i ) / ( (1 + i)^n - 1 )
+    const i = juros / 100; // juros ao mês
+    const n = parcelas;
+
+    let valorParcela;
+
+    if (i === 0) {
+        valorParcela = valor / n;
+    } else {
+        valorParcela = valor * ( (Math.pow(1 + i, n) * i) / (Math.pow(1 + i, n) - 1) );
+    }
+
+    resultado.textContent = `Você pagará ${parcelas}x de ${valorParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} valor total: ${(valorParcela * parcelas).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+    resultado.classList.remove("hidden", "text-red-600");
+    resultado.classList.add("text-indigo-700");
+}
+
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94857459270b7a6f',t:'MTc0ODY4Mzg0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
