@@ -1,2 +1,7 @@
-Preço,Item1,Custo,Lucro%,Item2,Custo,Lucro%,Item3,Custo,Lucro%,Item4,Custo,Lucro%,Item5,Custo,Lucro%,Item6,Custo,Lucro%
-950.00,Gabinete,60.00,100%,Fonte,42.00,100%,Placa Mãe,130.00,70%,Processador,160.00,60%,Memória ram,90.00,70%,SSD,65.00,78%
+Item,Custo,Lucro%
+"Gabinete",60,100
+"Fonte",42,100
+"Placa",130,70
+"Processador",160,70
+"Memória",90,60
+"SSD",65,68
